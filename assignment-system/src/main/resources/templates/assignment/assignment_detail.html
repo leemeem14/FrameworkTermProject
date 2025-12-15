@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>과제 상세보기 - 과제 제출 시스템</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<nav class="navbar">
+    <div class="navbar-container">
+        <h1 class="navbar-brand">📚 과제 제출 시스템</h1>
+        <ul class="navbar-menu">
+            <li><a href="/assignment/list">과제 목록</a></li>
+            <li><a href="/logout" onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">로그아웃</a></li>
+        </ul>
+    </div>
+</nav>
+
+<form id="logoutForm" method="post" th:action="@{/logout}" style="display: none;">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+</form>
+
+<main class="container">
+    <a href="/assignment/list" class="btn btn-secondary btn-sm">← 목록으로</a>
+
+    <div class="assignment-detail">
+        <div class="assignment-detail-header">
+            <h2 th:text="${assignment.title}"></h2>
+            <div class="badges">
+                <!-- 선생님용 배지 -->
+                <span sec:authorize="hasAuthority('ROLE_TEACHER')" 
+                      class="badge" 
+                      th:if="${assignment.isOverdue}" 
+                      th:classappend="'badge-danger'">기한 지남</span>
+                <span sec:authorize="hasAuthority('ROLE_TEACHER')" 
+                      class="badge" 
+                      th:unless="${assignment.isOverdue}" 
+                      th:classappend="'badge-success'">진행 중</span>
+                
+                <!-- 학생용 배지 -->
+                <span sec:authorize="hasAuthority('ROLE_STUDENT')" 
+                      class="badge" 
+                      th:if="${hasSubmitted}" 
+                      th:classappend="'badge-info'">제출 완료</span>
+                <span sec:authorize="hasAuthority('ROLE_STUDENT')" 
+                      class="badge" 
+                      th:if="${!hasSubmitted and assignment.isOverdue}" 
+                      th:classappend="'badge-danger'">기한 지남</span>
+                <span sec:authorize="hasAuthority('ROLE_STUDENT')" 
+                      class="badge" 
+                      th:if="${!hasSubmitted and !assignment.isOverdue}" 
+                      th:classappend="'badge-warning'">진행 중</span>
+            </div>
+        </div>
+
+        <div class="assignment-detail-body">
+            <section class="detail-section">
+                <h3>과제 설명</h3>
+                <p th:text="${assignment.description}" class="description-text"></p>
+            </section>
+
+            <section class="detail-section">
+                <h3>과제 정보</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>선생님</label>
+                        <span th:text="${assignment.teacherName}"></span>
+                    </div>
+                    <div class="info-item">
+                        <label>기한</label>
+                        <span th:text="${#temporals.format(assignment.dueDate, 'yyyy-MM-dd HH:mm')}"></span>
+                    </div>
+                    <div class="info-item">
+                        <label>생성일</label>
+                        <span th:text="${#temporals.format(assignment.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                    </div>
+                    <div class="info-item">
+                        <label>수정일</label>
+                        <span th:text="${#temporals.format(assignment.updatedAt, 'yyyy-MM-dd HH:mm')}"></span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="detail-section" sec:authorize="hasAuthority('ROLE_STUDENT')">
+                <h3>📁 과제 제출</h3>
+                <div class="file-upload-area">
+                    <p>파일을 선택하거나 드래그하여 업로드하세요</p>
+                    <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.hwp,.txt,.zip,.jpg,.png">
+                    <button type="button" class="btn btn-primary" onclick="uploadFiles()">파일 업로드</button>
+                </div>
+                <div id="uploadStatus"></div>
+            </section>
+
+            <section class="detail-section" sec:authorize="hasAuthority('ROLE_STUDENT')">
+                <h3>📋 제출된 파일 목록</h3>
+                <div id="fileList" class="file-list">
+                    <div th:if="${mySubmissions != null and !mySubmissions.isEmpty()}">
+                        <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden;">
+                            <thead>
+                                <tr style="background-color: #f5f5f5;">
+                                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">파일명</th>
+                                    <th style="padding: 12px; text-align: right; border-bottom: 2px solid #ddd;">크기</th>
+                                    <th style="padding: 12px; text-align: center; border-bottom: 2px solid #ddd;">제출일시</th>
+                                    <th style="padding: 12px; text-align: center; border-bottom: 2px solid #ddd;">다운로드</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="submission : ${mySubmissions}">
+                                    <td style="padding: 12px; border-bottom: 1px solid #eee;" th:text="${submission.originalFilename}"></td>
+                                    <td style="padding: 12px; text-align: right; border-bottom: 1px solid #eee;" th:text="${#numbers.formatDecimal(submission.fileSize / 1024.0, 1, 2)} + ' KB'"></td>
+                                    <td style="padding: 12px; text-align: center; border-bottom: 1px solid #eee;" th:text="${#temporals.format(submission.submittedAt, 'yyyy-MM-dd HH:mm')}"></td>
+                                    <td style="padding: 12px; text-align: center; border-bottom: 1px solid #eee;">
+                                        <a th:href="@{/api/file/download/{filename}(filename=${submission.filename})}" 
+                                           class="btn btn-primary btn-sm" 
+                                           download th:attr="download=${submission.originalFilename}">다운로드</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div th:if="${mySubmissions == null or mySubmissions.isEmpty()}" class="empty-state">
+                        <p>제출된 파일이 없습니다</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 선생님용 제출 목록 -->
+            <section class="detail-section" sec:authorize="hasAuthority('ROLE_TEACHER')">
+                <h3>👥 학생 제출 현황</h3>
+                <div th:if="${submissionsByUser != null and !submissionsByUser.isEmpty()}">
+                    <div th:each="entry : ${submissionsByUser}" class="submission-group" style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 5px;">
+                        <h4 th:text="${entry.key}" style="margin-top: 0; color: #333;"></h4>
+                        <div class="submission-files">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background-color: #f5f5f5;">
+                                        <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">파일명</th>
+                                        <th style="padding: 8px; text-align: right; border-bottom: 1px solid #ddd;">크기</th>
+                                        <th style="padding: 8px; text-align: center; border-bottom: 1px solid #ddd;">제출일시</th>
+                                        <th style="padding: 8px; text-align: center; border-bottom: 1px solid #ddd;">다운로드</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="submission : ${entry.value}">
+                                        <td style="padding: 8px; border-bottom: 1px solid #eee;" th:text="${submission.originalFilename}"></td>
+                                        <td style="padding: 8px; text-align: right; border-bottom: 1px solid #eee;" th:text="${#numbers.formatDecimal(submission.fileSize / 1024.0, 1, 2)} + ' KB'"></td>
+                                        <td style="padding: 8px; text-align: center; border-bottom: 1px solid #eee;" th:text="${#temporals.format(submission.submittedAt, 'yyyy-MM-dd HH:mm')}"></td>
+                                        <td style="padding: 8px; text-align: center; border-bottom: 1px solid #eee;">
+                                            <a th:href="@{/api/file/download/{filename}(filename=${submission.filename})}" 
+                                               class="btn btn-primary btn-sm" 
+                                               download th:attr="download=${submission.originalFilename}">다운로드</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${submissionsByUser == null or submissionsByUser.isEmpty()}" class="empty-state">
+                    <p>아직 제출된 파일이 없습니다.</p>
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>&copy; 2024 과제 제출 시스템. All rights reserved.</p>
+</footer>
+
+<script>
+    // 과제 ID를 JavaScript 변수로 전달
+    const assignmentId = [[${assignment.id}]];
+</script>
+<script src="/js/main.js"></script>
+</body>
+</html>

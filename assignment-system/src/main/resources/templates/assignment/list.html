@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>과제 목록 - 과제 제출 시스템</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <h1 class="navbar-brand">📚 과제 제출 시스템</h1>
+            <ul class="navbar-menu">
+                <li><a href="/assignment/list">과제 목록</a></li>
+                <li sec:authorize="hasAuthority('ROLE_TEACHER')"><a href="/assignment/create">과제 생성</a></li>
+                <li><a href="/logout" onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">로그아웃</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <form id="logoutForm" method="post" th:action="@{/logout}" style="display: none;">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    </form>
+
+    <main class="container">
+        <div class="page-header">
+            <h2>과제 목록</h2>
+            <sec:authorize="hasAuthority('ROLE_TEACHER')">
+                <a href="/assignment/create" class="btn btn-primary">새 과제 생성</a>
+            </sec:authorize>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <div class="assignment-list">
+            <div th:if="${#lists.isEmpty(assignments)}" class="empty-state">
+                <p>과제가 없습니다.</p>
+            </div>
+
+            <div th:each="assignment : ${assignments}" class="assignment-card">
+                <div class="assignment-header">
+                    <h3 th:text="${assignment.title}"></h3>
+                    <span class="badge" th:if="${assignment.isOverdue}" th:classappend="'badge-danger'">
+                        기한 지남
+                    </span>
+                    <span class="badge" th:unless="${assignment.isOverdue}" th:classappend="'badge-success'">
+                        진행 중
+                    </span>
+                </div>
+                <div class="assignment-body">
+                    <p th:text="${assignment.description}"></p>
+                    <div class="assignment-meta">
+                        <span>선생님: <strong th:text="${assignment.teacherName}"></strong></span>
+                        <span>기한: <strong th:text="${#temporals.format(assignment.dueDate, 'yyyy-MM-dd HH:mm')}"></strong></span>
+                    </div>
+                </div>
+                <div class="assignment-footer">
+                    <a th:href="@{/assignment/{id}(id=${assignment.id})}" class="btn btn-secondary btn-sm">상세보기</a>
+                    <div sec:authorize="hasAuthority('ROLE_TEACHER')">
+                        <a th:href="@{/assignment/{id}/edit(id=${assignment.id})}" class="btn btn-warning btn-sm">수정</a>
+                        <form th:action="@{/assignment/{id}/delete(id=${assignment.id})}" method="post" style="display:inline;">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 과제 제출 시스템. All rights reserved.</p>
+    </footer>
+</body>
+</html>
