@@ -166,12 +166,12 @@
 </main>
 
 <footer class="footer">
-    <p>&copy; 2024 과제 제출 시스템. All rights reserved.</p>
+    <p>&copy; 2025 과제 제출 시스템. All rights reserved.</p>
 </footer>
 
-<script>
+<script th:inline="javascript">
     // 과제 ID를 JavaScript 변수로 전달
-    const assignmentId = [[${assignment.id}]];
+    const assignmentId = /*[[${assignment.id}]]*/ 0;
 </script>
 <script src="/js/main.js"></script>
 </body>
