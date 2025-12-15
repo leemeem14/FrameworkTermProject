@@ -119,44 +119,8 @@ Version Control: Git & GitHub
 Database Management: MySQL, DataGrip
 
 📁 Project Structure
-text
-assignment-system/
-├── src/
-│   ├── main/
-│   │   ├── java/com/assignment/
-│   │   │   ├── controller/          # REST Controllers
-│   │   │   │   ├── AuthController.java
-│   │   │   │   ├── AssignmentController.java
-│   │   │   │   └── FileController.java
-│   │   │   ├── service/             # Business Logic
-│   │   │   │   ├── UserService.java
-│   │   │   │   ├── AssignmentService.java
-│   │   │   │   ├── SubmissionService.java
-│   │   │   │   └── FileService.java
-│   │   │   ├── entity/              # JPA Entities
-│   │   │   │   ├── User.java
-│   │   │   │   ├── Assignment.java
-│   │   │   │   ├── Submission.java
-│   │   │   │   └── Role.java
-│   │   │   ├── repository/          # Data Access Layer
-│   │   │   │   ├── UserRepository.java
-│   │   │   │   ├── AssignmentRepository.java
-│   │   │   │   └── SubmissionRepository.java
-│   │   │   ├── dto/                 # Data Transfer Objects
-│   │   │   ├── config/              # Configuration Classes
-│   │   │   │   └── SecurityConfig.java
-│   │   │   ├── security/            # Security Components
-│   │   │   │   ├── JwtTokenProvider.java
-│   │   │   │   └── CustomUserDetailsService.java
-│   │   │   └── AssignmentSystemApplication.java
-│   │   ├── resources/
-│   │   │   ├── application.properties
-│   │   │   ├── db/                  # SQL scripts
-│   │   │   ├── static/              # Static resources
-│   │   │   └── templates/           # Thymeleaf templates
-│   │   └── test/                    # Test classes
-├── pom.xml                          # Maven configuration
-└── README.md
+<img width="393" height="680" alt="{1BDE9624-4D68-4C4F-B6EA-419307E203FC}" src="https://github.com/user-attachments/assets/05089b75-86af-4333-949d-f002380d8a6e" />
+
 🏗 System Architecture
 Layered Architecture
 The application follows a classic three-tier layered architecture:
@@ -672,44 +636,8 @@ IDE: IntelliJ IDEA (권장)
 데이터베이스 관리: MySQL, DataGrip
 
 📁 프로젝트 구조
-text
-assignment-system/
-├── src/
-│   ├── main/
-│   │   ├── java/com/assignment/
-│   │   │   ├── controller/          # REST 컨트롤러
-│   │   │   │   ├── AuthController.java
-│   │   │   │   ├── AssignmentController.java
-│   │   │   │   └── FileController.java
-│   │   │   ├── service/             # 비즈니스 로직
-│   │   │   │   ├── UserService.java
-│   │   │   │   ├── AssignmentService.java
-│   │   │   │   ├── SubmissionService.java
-│   │   │   │   └── FileService.java
-│   │   │   ├── entity/              # JPA 엔티티
-│   │   │   │   ├── User.java
-│   │   │   │   ├── Assignment.java
-│   │   │   │   ├── Submission.java
-│   │   │   │   └── Role.java
-│   │   │   ├── repository/          # 데이터 접근 계층
-│   │   │   │   ├── UserRepository.java
-│   │   │   │   ├── AssignmentRepository.java
-│   │   │   │   └── SubmissionRepository.java
-│   │   │   ├── dto/                 # 데이터 전송 객체
-│   │   │   ├── config/              # 설정 클래스
-│   │   │   │   └── SecurityConfig.java
-│   │   │   ├── security/            # 보안 컴포넌트
-│   │   │   │   ├── JwtTokenProvider.java
-│   │   │   │   └── CustomUserDetailsService.java
-│   │   │   └── AssignmentSystemApplication.java
-│   │   ├── resources/
-│   │   │   ├── application.properties
-│   │   │   ├── db/                  # SQL 스크립트
-│   │   │   ├── static/              # 정적 리소스
-│   │   │   └── templates/           # Thymeleaf 템플릿
-│   │   └── test/                    # 테스트 클래스
-├── pom.xml                          # Maven 설정
-└── README.md
+<img width="359" height="680" alt="{27B85F96-AE68-4798-A41B-903B86D58356}" src="https://github.com/user-attachments/assets/78eb160a-5d73-4d0e-9001-acd3f473039f" />
+
 🏗 시스템 아키텍처
 레이어드 아키텍처
 이 애플리케이션은 고전적인 3계층 레이어드 아키텍처를 따릅니다:
