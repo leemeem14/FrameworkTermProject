@@ -1,4 +1,4 @@
-<ENG>(kor 은 554번째 줄로 가세요.)
+ENG(kor 은 508번째 줄로 가세요.)
 Assignment System - 과제 제출 시스템
 A comprehensive web-based assignment submission system built with Spring Boot 3, featuring secure user authentication, role-based access control, and file management capabilities......for Assignment(yeah i made this 4 termProject assignment).
 
@@ -505,7 +505,7 @@ Check existing documentation
 
 Last Updated: December 2025
 
-<KOR>
+KOR
 과제 제출 시스템 (Assignment System)
 Spring Boot 3을 기반으로 구축한 포괄적인 웹 기반 과제 제출 시스템입니다. 안전한 사용자 인증, 역할 기반 접근 제어, 파일 관리 기능을 갖추고 있습니다.(텀프로젝트 과제 제출용)
 
